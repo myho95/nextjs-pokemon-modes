@@ -30,7 +30,7 @@ const Details = () => {
       </Head>
       <div>
         <Link className="hover:text-green-400" href="/">
-          &#60; Back to Home
+          &#60;Back to Home
         </Link>
       </div>
       <div className="flex flex-row gap-20 mt-20">
