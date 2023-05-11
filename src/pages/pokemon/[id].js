@@ -1,27 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
 
-const Details = () => {
-  const [pokemon, setPokemon] = useState(null);
-  const {
-    query: { id },
-  } = useRouter();
-  useEffect(() => {
-    async function getPokemon() {
-      const resp = await fetch(
-        `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${id}.json`
-      );
-      setPokemon(await resp.json());
-    }
-    if (id) {
-      getPokemon();
-    }
-  }, [id]);
+export async function getServerSideProps({ params }) {
+  if (typeof Number(params.id) === NaN) {
+    return { props: {} };
+  }
+  const resp = await fetch(
+    `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`
+  );
+  return {
+    props: {
+      pokemon: await resp.json(),
+      param: params,
+    },
+  };
+}
+
+const Details = ({ pokemon }) => {
   if (!pokemon) {
-    return null;
+    return (
+      <div>
+        <Link className="hover:text-green-400" href="/">
+          &#60;Back to Home
+        </Link>
+      </div>
+    );
   }
   return (
     <div>
@@ -36,11 +41,12 @@ const Details = () => {
       <div className="flex flex-row gap-20 mt-20">
         <div>
           <Image
-            className="max-h-96"
+            className="max-h-96 w-auto h-auto"
             src={`https://jherr-pokemon.s3.us-west-1.amazonaws.com/${pokemon.image}`}
             width={500}
             height={500}
             alt={pokemon.name}
+            priority={true}
           />
         </div>
         <div>
