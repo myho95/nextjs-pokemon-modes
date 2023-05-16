@@ -15,18 +15,30 @@ export async function getStaticPaths() {
     fallback: false,
   };
 }
+
 export async function getStaticProps({ params }) {
   if (typeof Number(params.id) === NaN) {
     return { props: {} };
   }
-  const resp = await fetch(
-    `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`
-  );
+  let resp = null;
+  if (Number(params.id) === 1) {
+    const resp1 = await fetch(
+      `https://nextjs-pokemon-default-rtdb.firebaseio.com/1.json`
+    );
+    resp = await resp1.json();
+  } else {
+    const resp2 = await fetch(
+      `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`
+    );
+    resp = await resp2.json();
+  }
+
   return {
     props: {
-      pokemon: await resp.json(),
+      pokemon: resp,
       param: params,
     },
+    revalidate: 30,
   };
 }
 
