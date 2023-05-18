@@ -4,9 +4,7 @@ import Link from "next/link";
 import styles from "../styles/home.module.css";
 
 export async function getStaticProps() {
-  const resp = await fetch(
-    "https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json"
-  );
+  const resp = await fetch(process.env.LINK);
   return {
     props: {
       pokemon: await resp.json(),
